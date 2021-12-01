@@ -1,0 +1,35 @@
+{
+	"name": "DFBigData",
+	"properties": {
+		"folder": {
+			"name": "BigData"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DSBigDataParquetIN",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DSBigDataParquetOut",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Select1"
+				}
+			],
+			"script": "source(output(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as short,\n\t\tQuantity as byte,\n\t\tPrice as decimal(38,18),\n\t\tTotalAmount as decimal(38,18),\n\t\tTransactionDate as integer,\n\t\tProfitAmount as decimal(38,18),\n\t\tHour as byte,\n\t\tMinute as byte,\n\t\tStoreId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1)) ~> source1\nsource1 select(mapColumn(\n\t\tTransactionId,\n\t\tCustomerId,\n\t\tProductId,\n\t\tQuantity,\n\t\tPrice,\n\t\tTotalAmount,\n\t\tTransactionDate,\n\t\tProfitAmount,\n\t\tHour,\n\t\tMinute\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

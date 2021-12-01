@@ -1,0 +1,17 @@
+{
+	"name": "MVP-TEST-ADF-DEV",
+	"properties": {
+		"globalParameters": {
+			"DataBricksParameter": {
+				"type": "string",
+				"value": "https://adb-5615757932026992.12.azuredatabricks.net"
+			}
+		}
+	},
+	"location": "southcentralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5e6dee42-b4c4-4148-b1a5-aa4ea0ffd494",
+		"tenantId": "38808b06-4f1a-4617-a154-d8dae8571b17"
+	}
+}

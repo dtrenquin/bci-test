@@ -1,0 +1,11 @@
+{
+	"name": "LNK_AzureKeyVault1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://MVP-TEST-KEYVAULT-DEV.vault.azure.net/"
+		}
+	}
+}

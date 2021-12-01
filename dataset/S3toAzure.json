@@ -1,0 +1,30 @@
+{
+	"name": "S3toAzure",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LNK_AmazonS31",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Directory": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "MACH"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AmazonS3Location",
+				"bucketName": "621254586315-adf-poc",
+				"folderPath": {
+					"value": "@dataset().Directory",
+					"type": "Expression"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

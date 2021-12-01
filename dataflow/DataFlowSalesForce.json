@@ -1,0 +1,45 @@
+{
+	"name": "DataFlowSalesForce",
+	"properties": {
+		"folder": {
+			"name": "SalesForce"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ADL_SALESMALL_FULL",
+						"type": "DatasetReference"
+					},
+					"name": "FULL"
+				},
+				{
+					"dataset": {
+						"referenceName": "ADL_SALESMALL_INC",
+						"type": "DatasetReference"
+					},
+					"name": "UPDATE"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ADL_SALESMALL_FULL",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Union1"
+				},
+				{
+					"name": "Aggregate1"
+				}
+			],
+			"script": "source(output(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as integer,\n\t\tQuantity as integer,\n\t\tTransactionDateId as integer,\n\t\tHour as integer,\n\t\tMinute as integer,\n\t\tStoreId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> FULL\nsource(output(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as integer,\n\t\tQuantity as integer,\n\t\tTransactionDate as integer,\n\t\tHour as integer,\n\t\tMinute as integer,\n\t\tStoreId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> UPDATE\nFULL, UPDATE union(byName: true)~> Union1\nUnion1 aggregate(groupBy(TransactionId),\n\teach(match(name!='TransactionId'), $$ = last($$))) ~> Aggregate1\nAggregate1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as integer,\n\t\tQuantity as integer,\n\t\tPrice as decimal(9,2),\n\t\tTotalAmount as decimal(9,2),\n\t\tTransactionDateId as integer,\n\t\tProfitAmount as decimal(9,2),\n\t\tHour as integer,\n\t\tMinute as integer,\n\t\tStoreId as integer\n\t),\n\tformat: 'parquet',\n\ttruncate: true,\n\tumask: 0777,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

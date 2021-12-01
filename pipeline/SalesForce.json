@@ -1,0 +1,19 @@
+{
+	"name": "SalesForce",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1 -21",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-11-18T14:24:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,63 @@
+{
+	"name": "FULL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AmazonS3ReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "S3toAzure",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "bci_financial_system_debt_tb/year=2021/"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DataLakeS3",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "year=2021/"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "MACH"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-27T18:10:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

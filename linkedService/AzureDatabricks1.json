@@ -1,0 +1,26 @@
+{
+	"name": "AzureDatabricks1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"test": {
+				"type": "string",
+				"defaultValue": "123"
+			}
+		},
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "@linkedService().test",
+			"accessToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LNK_AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "DataBricksToken"
+			},
+			"existingClusterId": "NuevoTest"
+		}
+	}
+}

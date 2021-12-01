@@ -1,0 +1,75 @@
+{
+	"name": "ADL_SALESMALL_FULL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LNK_AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SalesForce"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "salesForceFull",
+				"fileSystem": "input"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "TransactionId",
+				"type": "UTF8"
+			},
+			{
+				"name": "CustomerId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProductId",
+				"type": "INT32"
+			},
+			{
+				"name": "Quantity",
+				"type": "INT32"
+			},
+			{
+				"name": "Price",
+				"type": "DECIMAL",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "TotalAmount",
+				"type": "DECIMAL",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "TransactionDateId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProfitAmount",
+				"type": "DECIMAL",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "Hour",
+				"type": "INT32"
+			},
+			{
+				"name": "Minute",
+				"type": "INT32"
+			},
+			{
+				"name": "StoreId",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
