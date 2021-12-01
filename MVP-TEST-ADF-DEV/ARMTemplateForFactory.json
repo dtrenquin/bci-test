@@ -1,0 +1,2087 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "MVP-TEST-ADF-DEV"
+		},
+		"AmazonS3_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS3'"
+		},
+		"AmazonS31_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS31'"
+		},
+		"AzureDataLakeStorage1_servicePrincipalCredential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalCredential' of 'AzureDataLakeStorage1'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
+		"LNK_AmazonS31_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'LNK_AmazonS31'"
+		},
+		"AmazonS3_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAZBJNIV7FRBLDO775"
+		},
+		"AmazonS31_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "asdasd"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mvpteststoragedev.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "38808b06-4f1a-4617-a154-d8dae8571b17"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "7c219963-420e-4842-904b-4cd21a689fcb"
+		},
+		"LNK_AmazonS31_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAZBJNIV7FRBLDO775"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mvpteststoragedev.dfs.core.windows.net"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "38808b06-4f1a-4617-a154-d8dae8571b17"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "7c219963-420e-4842-904b-4cd21a689fcb"
+		},
+		"LNK_AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://MVP-TEST-KEYVAULT-DEV.vault.azure.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/FULL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AmazonS3ReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "S3toAzure",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "bci_financial_system_debt_tb/year=2021/"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DataLakeS3",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "year=2021/"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MACH"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-27T18:10:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/S3toAzure')]",
+				"[concat(variables('factoryId'), '/datasets/DataLakeS3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MACH pipelines')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata2",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "S3toAzure",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "x"
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AmazonS3ReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@array(last(activity('Get Metadata2').output.childItems))",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@contains(item().name,'month')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "mesUltimo",
+							"value": {
+								"value": "@activity('Filter1').output.value[0].name",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"mesUltimo": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-18T14:19:53Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/S3toAzure')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mensual')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ADLS S3",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DataLakeS3",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "year=2021/"
+								}
+							},
+							"fieldList": [
+								"childItems",
+								"itemName",
+								"lastModified"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Ultimadata",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "ADLS S3",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@array(last(activity('ADLS S3').output.childitems))",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@contains(item().name,'month')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "S3 TO AZURE",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "S3toAzure",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "bci_financial_system_debt_tb/year=2021/"
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AmazonS3ReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Ultimadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "S3 TO AZURE",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('S3 TO AZURE').output.childitems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@greaterOrEquals(substring(item().name,6,2),substring(activity('Ultimadata').output.value[0].name,6,2))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Delete1",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DataLakeS3",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@concat('year=2021/',activity('Ultimadata').output.value[0].name)",
+										"type": "Expression"
+									}
+								}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Delete1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "AmazonS3ReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "S3toAzure",
+											"type": "DatasetReference",
+											"parameters": {
+												"Directory": {
+													"value": "@concat('bci_financial_system_debt_tb/year=2021/',item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DataLakeS3",
+											"type": "DatasetReference",
+											"parameters": {
+												"Directory": {
+													"value": "@concat('year=2021/',item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MACH"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-27T18:10:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DataLakeS3')]",
+				"[concat(variables('factoryId'), '/datasets/S3toAzure')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PIP-TEST-BCI')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Pipeline MACH')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ADLS S3",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DataLakeS3",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "year=2021/"
+								}
+							},
+							"fieldList": [
+								"childItems",
+								"itemName",
+								"lastModified"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Ultimadata",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "ADLS S3",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@array(last(activity('ADLS S3').output.childitems))",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@contains(item().name,'month')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "S3 TO AZURE",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "S3toAzure",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "bci_financial_system_debt_tb/year=2021/"
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AmazonS3ReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter1",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Ultimadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "S3 TO AZURE",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('S3 TO AZURE').output.childitems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@greaterOrEquals(substring(item().name,6,2),substring(activity('Ultimadata').output.value[0].name,6,2))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Delete1",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Filter1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DataLakeS3",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@concat('year=2021/',activity('Ultimadata').output.value[0].name)",
+										"type": "Expression"
+									}
+								}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Delete1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "AmazonS3ReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "S3toAzure",
+											"type": "DatasetReference",
+											"parameters": {
+												"Directory": {
+													"value": "@concat('bci_financial_system_debt_tb/year=2021/',item())",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DataLakeS3",
+											"type": "DatasetReference",
+											"parameters": {
+												"Directory": {
+													"value": "@concat('year=2021/',item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MACH"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-22T17:38:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DataLakeS3')]",
+				"[concat(variables('factoryId'), '/datasets/S3toAzure')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sale-Small-Full')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "COPY DATA FULL",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT \n      [TransactionId]\n      ,[CustomerId]\n      ,[ProductId]\n      ,[Quantity]\n      ,[TransactionDateId]\n      ,[Hour]\n      ,[Minute]\n      ,[StoreId]\n  FROM [dbo].[SaleSmall]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TransactionId",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "TransactionId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "CustomerId",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductId",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "ProductId",
+											"type": "Int16",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "TransactionDateId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "TransactionDateId",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Hour",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "Hour",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Minute",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "Minute",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "StoreId",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "StoreId",
+											"type": "Int16",
+											"physicalType": "INT_32"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {
+									"schema": "dbo",
+									"nombretabla": "SaleSmall"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "salesforce_adls_parquet",
+								"type": "DatasetReference",
+								"parameters": {
+									"container": "input",
+									"directory": "salesForceFull",
+									"filename": "sale-small-full.parquet"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "SalesForce"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-27T18:10:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/salesforce_adls_parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sale-Small-INC')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "COPY-DATA-INC",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [TransactionId]\n      ,[CustomerId]\n      ,[ProductId]\n      ,[Quantity]\n      ,[TransactionDate]\n      ,[Hour]\n      ,[Minute]\n      ,[StoreId]\n  FROM [dbo].[sale-small-modified]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TransactionId",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "TransactionId",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "CustomerId",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductId",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "ProductId",
+											"type": "Int16",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "TransactionDate",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "TransactionDate",
+											"type": "Int32",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Hour",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "Hour",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "Minute",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "Minute",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									},
+									{
+										"source": {
+											"name": "StoreId",
+											"type": "Byte",
+											"physicalType": "tinyint"
+										},
+										"sink": {
+											"name": "StoreId",
+											"type": "Byte",
+											"physicalType": "INT_32"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {
+									"schema": "dbo",
+									"nombretabla": "sale-small-modified"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "salesforce_adls_parquet",
+								"type": "DatasetReference",
+								"parameters": {
+									"container": "input",
+									"directory": "salesForceInc",
+									"filename": "sale-small-inc.parquet"
+								}
+							}
+						]
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "COPY-DATA-INC",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DataFlowSalesForce",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"FULL": {},
+									"UPDATE": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "SalesForce"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-27T18:10:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/salesforce_adls_parquet')]",
+				"[concat(variables('factoryId'), '/dataflows/DataFlowSalesForce')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SalesForce')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1 -21",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-18T14:24:50Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipelineCSG')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1 -1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "InputData",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "outputData",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-27T18:10:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InputData')]",
+				"[concat(variables('factoryId'), '/datasets/outputData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ultimoDia')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DataLakeS3",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@concat('/year=',utcnow('yyyy'),'/month=',formatDateTime(adddays(utcnow(), -1), 'MM'),'/day=',\n formatDateTime(adddays(utcnow(), -1), 'dd')\n)",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MACH"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-08T17:47:07Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DataLakeS3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADL_SALESMALL_FULL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SalesForce"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "salesForceFull",
+						"fileSystem": "input"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "UTF8"
+					},
+					{
+						"name": "CustomerId",
+						"type": "INT32"
+					},
+					{
+						"name": "ProductId",
+						"type": "INT32"
+					},
+					{
+						"name": "Quantity",
+						"type": "INT32"
+					},
+					{
+						"name": "Price",
+						"type": "DECIMAL",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TotalAmount",
+						"type": "DECIMAL",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TransactionDateId",
+						"type": "INT32"
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "DECIMAL",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "Hour",
+						"type": "INT32"
+					},
+					{
+						"name": "Minute",
+						"type": "INT32"
+					},
+					{
+						"name": "StoreId",
+						"type": "INT32"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADL_SALESMALL_INC')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SalesForce"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "salesForceInc",
+						"fileSystem": "input"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"nombretabla": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().nombretabla",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DSBigDataParquetIN')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BigData"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "sale-small-20190101-snappy.parquet",
+						"folderPath": "in",
+						"fileSystem": "input"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "UTF8"
+					},
+					{
+						"name": "CustomerId",
+						"type": "INT32"
+					},
+					{
+						"name": "ProductId",
+						"type": "INT_16"
+					},
+					{
+						"name": "Quantity",
+						"type": "INT_8"
+					},
+					{
+						"name": "Price",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TotalAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TransactionDate",
+						"type": "INT32"
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "Hour",
+						"type": "INT_8"
+					},
+					{
+						"name": "Minute",
+						"type": "INT_8"
+					},
+					{
+						"name": "StoreId",
+						"type": "INT_16"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DSBigDataParquetOut')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BigData"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "out",
+						"fileSystem": "input"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataLakeS3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						},
+						"fileSystem": "input"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/InputData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "sale-small-20190101-snappy.parquet",
+						"folderPath": "in",
+						"fileSystem": "input"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "sale-small-20190101-snappy.parquet",
+						"folderPath": "in",
+						"fileSystem": "input"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "UTF8"
+					},
+					{
+						"name": "CustomerId",
+						"type": "INT32"
+					},
+					{
+						"name": "ProductId",
+						"type": "INT_16"
+					},
+					{
+						"name": "Quantity",
+						"type": "INT_8"
+					},
+					{
+						"name": "Price",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TotalAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TransactionDate",
+						"type": "INT32"
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "Hour",
+						"type": "INT_8"
+					},
+					{
+						"name": "Minute",
+						"type": "INT_8"
+					},
+					{
+						"name": "StoreId",
+						"type": "INT_16"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/S3toAzure')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AmazonS31",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "MACH"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AmazonS3Location",
+						"bucketName": "621254586315-adf-poc",
+						"folderPath": {
+							"value": "@dataset().Directory",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AmazonS31')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/outputData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "out",
+						"fileSystem": "input"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/salesforce_adls_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNK_AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container": {
+						"type": "string"
+					},
+					"directory": {
+						"type": "string"
+					},
+					"filename": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "SalesForce"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().directory",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container",
+							"type": "Expression"
+						}
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AmazonS3')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "",
+					"accessKeyId": "[parameters('AmazonS3_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('AmazonS3_secretAccessKey')]"
+					},
+					"authenticationType": "AccessKey"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AmazonS31')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "",
+					"accessKeyId": "[parameters('AmazonS31_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('AmazonS31_secretAccessKey')]"
+					},
+					"authenticationType": "AccessKey"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"tenant": "[parameters('AzureDataLakeStorage1_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_servicePrincipalCredential')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDatabricks1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"test": {
+						"type": "string",
+						"defaultValue": "123"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "@linkedService().test",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LNK_AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "DataBricksToken"
+					},
+					"existingClusterId": "NuevoTest"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureKeyVault1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LNK_AmazonS31')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "",
+					"accessKeyId": "[parameters('LNK_AmazonS31_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('LNK_AmazonS31_secretAccessKey')]"
+					},
+					"authenticationType": "AccessKey"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LNK_AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LNK_AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"tenant": "[parameters('LNK_AzureDataLakeStorage1_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('LNK_AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LNK_AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "keyvaulprincipalstorage"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNK_AzureKeyVault1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LNK_AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LNK_AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFBigData')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "BigData"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DSBigDataParquetIN",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DSBigDataParquetOut",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Select1"
+						}
+					],
+					"script": "source(output(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as short,\n\t\tQuantity as byte,\n\t\tPrice as decimal(38,18),\n\t\tTotalAmount as decimal(38,18),\n\t\tTransactionDate as integer,\n\t\tProfitAmount as decimal(38,18),\n\t\tHour as byte,\n\t\tMinute as byte,\n\t\tStoreId as short\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\tpartitionBy('hash', 1)) ~> source1\nsource1 select(mapColumn(\n\t\tTransactionId,\n\t\tCustomerId,\n\t\tProductId,\n\t\tQuantity,\n\t\tPrice,\n\t\tTotalAmount,\n\t\tTransactionDate,\n\t\tProfitAmount,\n\t\tHour,\n\t\tMinute\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DSBigDataParquetIN')]",
+				"[concat(variables('factoryId'), '/datasets/DSBigDataParquetOut')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DataFlowSalesForce')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "SalesForce"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ADL_SALESMALL_FULL",
+								"type": "DatasetReference"
+							},
+							"name": "FULL"
+						},
+						{
+							"dataset": {
+								"referenceName": "ADL_SALESMALL_INC",
+								"type": "DatasetReference"
+							},
+							"name": "UPDATE"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ADL_SALESMALL_FULL",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Union1"
+						},
+						{
+							"name": "Aggregate1"
+						}
+					],
+					"script": "source(output(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as integer,\n\t\tQuantity as integer,\n\t\tTransactionDateId as integer,\n\t\tHour as integer,\n\t\tMinute as integer,\n\t\tStoreId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> FULL\nsource(output(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as integer,\n\t\tQuantity as integer,\n\t\tTransactionDate as integer,\n\t\tHour as integer,\n\t\tMinute as integer,\n\t\tStoreId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> UPDATE\nFULL, UPDATE union(byName: true)~> Union1\nUnion1 aggregate(groupBy(TransactionId),\n\teach(match(name!='TransactionId'), $$ = last($$))) ~> Aggregate1\nAggregate1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tTransactionId as string,\n\t\tCustomerId as integer,\n\t\tProductId as integer,\n\t\tQuantity as integer,\n\t\tPrice as decimal(9,2),\n\t\tTotalAmount as decimal(9,2),\n\t\tTransactionDateId as integer,\n\t\tProfitAmount as decimal(9,2),\n\t\tHour as integer,\n\t\tMinute as integer,\n\t\tStoreId as integer\n\t),\n\tformat: 'parquet',\n\ttruncate: true,\n\tumask: 0777,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ADL_SALESMALL_FULL')]",
+				"[concat(variables('factoryId'), '/datasets/ADL_SALESMALL_INC')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		}
+	]
+}

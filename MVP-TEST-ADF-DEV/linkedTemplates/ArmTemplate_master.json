@@ -1,0 +1,167 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "MVP-TEST-ADF-DEV"
+		},
+		"AmazonS3_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS3'"
+		},
+		"AmazonS31_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS31'"
+		},
+		"AzureDataLakeStorage1_servicePrincipalCredential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalCredential' of 'AzureDataLakeStorage1'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
+		"LNK_AmazonS31_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'LNK_AmazonS31'"
+		},
+		"AmazonS3_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAZBJNIV7FRBLDO775"
+		},
+		"AmazonS31_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "asdasd"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mvpteststoragedev.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "38808b06-4f1a-4617-a154-d8dae8571b17"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "7c219963-420e-4842-904b-4cd21a689fcb"
+		},
+		"LNK_AmazonS31_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAZBJNIV7FRBLDO775"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mvpteststoragedev.dfs.core.windows.net"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "38808b06-4f1a-4617-a154-d8dae8571b17"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "7c219963-420e-4842-904b-4cd21a689fcb"
+		},
+		"LNK_AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://MVP-TEST-KEYVAULT-DEV.vault.azure.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "MVP-TEST-ADF-DEV_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AmazonS3_secretAccessKey": {
+						"value": "[parameters('AmazonS3_secretAccessKey')]"
+					},
+					"AmazonS31_secretAccessKey": {
+						"value": "[parameters('AmazonS31_secretAccessKey')]"
+					},
+					"AzureDataLakeStorage1_servicePrincipalCredential": {
+						"value": "[parameters('AzureDataLakeStorage1_servicePrincipalCredential')]"
+					},
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					},
+					"LNK_AmazonS31_secretAccessKey": {
+						"value": "[parameters('LNK_AmazonS31_secretAccessKey')]"
+					},
+					"AmazonS3_properties_typeProperties_accessKeyId": {
+						"value": "[parameters('AmazonS3_properties_typeProperties_accessKeyId')]"
+					},
+					"AmazonS31_properties_typeProperties_accessKeyId": {
+						"value": "[parameters('AmazonS31_properties_typeProperties_accessKeyId')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_tenant": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_tenant')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId')]"
+					},
+					"LNK_AmazonS31_properties_typeProperties_accessKeyId": {
+						"value": "[parameters('LNK_AmazonS31_properties_typeProperties_accessKeyId')]"
+					},
+					"LNK_AzureKeyVault1_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LNK_AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					},
+					"LNK_AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('LNK_AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"LNK_AzureDataLakeStorage1_properties_typeProperties_tenant": {
+						"value": "[parameters('LNK_AzureDataLakeStorage1_properties_typeProperties_tenant')]"
+					},
+					"LNK_AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('LNK_AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "MVP-TEST-ADF-DEV_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'MVP-TEST-ADF-DEV_ArmTemplate_0')]"
+			]
+		}
+	]
+}

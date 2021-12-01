@@ -1,0 +1,6 @@
+{
+	"DataBricksParameter": {
+		"type": "string",
+		"value": "https://adb-5615757932026992.12.azuredatabricks.net"
+	}
+}

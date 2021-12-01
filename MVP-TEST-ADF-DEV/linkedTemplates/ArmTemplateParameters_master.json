@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "MVP-TEST-ADF-DEV"
+		},
+		"AmazonS3_secretAccessKey": {
+			"value": ""
+		},
+		"AmazonS31_secretAccessKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_servicePrincipalCredential": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
+		},
+		"LNK_AmazonS31_secretAccessKey": {
+			"value": ""
+		},
+		"AmazonS3_properties_typeProperties_accessKeyId": {
+			"value": "AKIAZBJNIV7FRBLDO775"
+		},
+		"AmazonS31_properties_typeProperties_accessKeyId": {
+			"value": "asdasd"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://mvpteststoragedev.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"value": "38808b06-4f1a-4617-a154-d8dae8571b17"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"value": "7c219963-420e-4842-904b-4cd21a689fcb"
+		},
+		"LNK_AmazonS31_properties_typeProperties_accessKeyId": {
+			"value": "AKIAZBJNIV7FRBLDO775"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://mvpteststoragedev.dfs.core.windows.net"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_tenant": {
+			"value": "38808b06-4f1a-4617-a154-d8dae8571b17"
+		},
+		"LNK_AzureDataLakeStorage1_properties_typeProperties_servicePrincipalId": {
+			"value": "7c219963-420e-4842-904b-4cd21a689fcb"
+		},
+		"LNK_AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://MVP-TEST-KEYVAULT-DEV.vault.azure.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
